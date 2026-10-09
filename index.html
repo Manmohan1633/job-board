@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manmohan's Job Board</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1e1e2e; color: #cdd6f4; margin: 40px; }
+        h1 { color: #89b4fa; text-align: center; }
+        .category { margin-top: 30px; border-bottom: 2px solid #313244; padding-bottom: 10px; color: #f38ba8; }
+        .job-card { background-color: #313244; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .job-title { font-size: 20px; font-weight: bold; color: #a6e3a1; }
+        .job-details { margin: 5px 0; color: #bac2de; }
+        a { color: #89b4fa; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Automated ECE Job Sniper</h1>
+    <div id="jobs-container">Loading latest AI-filtered jobs...</div>
+
+    <script>
+        // Fetches the JSON file the AI will create
+        fetch('jobs.json')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('jobs-container');
+                container.innerHTML = '';
+                
+                for (const [category, jobs] of Object.entries(data)) {
+                    container.innerHTML += `<h2 class="category">${category}</h2>`;
+                    if(jobs.length === 0) container.innerHTML += `<p>No new jobs today.</p>`;
+                    
+                    jobs.forEach(job => {
+                        container.innerHTML += `
+                            <div class="job-card">
+                                <div class="job-title">${job.title} - ${job.company}</div>
+                                <div class="job-details"><b>Eligibility:</b> ${job.eligibility}</div>
+                                <div class="job-details"><b>Deadline:</b> ${job.deadline}</div>
+                                <div class="job-details"><b>Why you should apply:</b> ${job.ai_reason}</div>
+                                <a href="${job.link}" target="_blank">Apply Here ➔</a>
+                            </div>`;
+                    });
+                }
+            }).catch(err => container.innerHTML = "Waiting for Lenovo server to upload data...");
+    </script>
+</body>
+</html>

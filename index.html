@@ -1,45 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Manmohan's Job Board</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Strategist | ECE 2027</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1e1e2e; color: #cdd6f4; margin: 40px; }
-        h1 { color: #89b4fa; text-align: center; }
-        .category { margin-top: 30px; border-bottom: 2px solid #313244; padding-bottom: 10px; color: #f38ba8; }
-        .job-card { background-color: #313244; padding: 15px; margin: 10px 0; border-radius: 8px; }
-        .job-title { font-size: 20px; font-weight: bold; color: #a6e3a1; }
-        .job-details { margin: 5px 0; color: #bac2de; }
-        a { color: #89b4fa; text-decoration: none; font-weight: bold; }
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --accent: #38bdf8;
+            --success: #4ade80;
+            --warning: #facc15;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+        header {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1rem;
+        }
+        h1 { margin: 0; color: var(--accent); }
+        p.subtitle { color: #94a3b8; margin-top: 0.5rem; }
+        
+        #dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .job-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .job-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .job-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            background: #334155;
+            margin-bottom: 1rem;
+        }
+        .section-title { font-size: 0.875rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.25rem; }
+        .apply-btn {
+            margin-top: auto;
+            padding-top: 1.5rem;
+        }
+        .apply-btn a {
+            display: block;
+            text-align: center;
+            background: var(--accent);
+            color: #0f172a;
+            text-decoration: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        .apply-btn a:hover { opacity: 0.9; }
+        .loader { text-align: center; color: var(--accent); font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1>🎯 Automated ECE Job Sniper</h1>
-    <div id="jobs-container">Loading latest AI-filtered jobs...</div>
+
+    <header>
+        <h1>AI Career Strategist</h1>
+        <p class="subtitle">Curated Govt, PSU & Rajasthan State Jobs for ECE (Class of 2027)</p>
+    </header>
+
+    <div id="dashboard"><div class="loader">Analyzing latest job postings...</div></div>
 
     <script>
-        // Fetches the JSON file the AI will create
-        fetch('jobs.json')
-            .then(response => response.json())
-            .then(data => {
-                const container = document.getElementById('jobs-container');
-                container.innerHTML = '';
-                
-                for (const [category, jobs] of Object.entries(data)) {
-                    container.innerHTML += `<h2 class="category">${category}</h2>`;
-                    if(jobs.length === 0) container.innerHTML += `<p>No new jobs today.</p>`;
-                    
-                    jobs.forEach(job => {
-                        container.innerHTML += `
-                            <div class="job-card">
-                                <div class="job-title">${job.title} - ${job.company}</div>
-                                <div class="job-details"><b>Eligibility:</b> ${job.eligibility}</div>
-                                <div class="job-details"><b>Deadline:</b> ${job.deadline}</div>
-                                <div class="job-details"><b>Why you should apply:</b> ${job.ai_reason}</div>
-                                <a href="${job.link}" target="_blank">Apply Here ➔</a>
-                            </div>`;
-                    });
+        async function fetchJobs() {
+            try {
+                // Cache-busting to ensure latest JSON is fetched
+                const response = await fetch(`jobs.json?t=${new Date().getTime()}`);
+                const jobs = await response.json();
+                const dashboard = document.getElementById('dashboard');
+                dashboard.innerHTML = '';
+
+                if (jobs.length === 0) {
+                    dashboard.innerHTML = '<p>No new relevant jobs found today.</p>';
+                    return;
                 }
-            }).catch(err => container.innerHTML = "Waiting for Lenovo server to upload data...");
+
+                jobs.forEach(job => {
+                    const card = document.createElement('div');
+                    card.className = 'job-card';
+                    card.innerHTML = `
+                        <div class="job-title">${job.title_dept}</div>
+                        <div>
+                            <div class="section-title">Why Apply?</div>
+                            <div>${job.why_apply}</div>
+                            
+                            <div class="section-title">Syllabus Match (ECE/GATE)</div>
+                            <div>${job.syllabus_compatibility}</div>
+                            
+                            <div class="section-title">Success Chances</div>
+                            <div style="color: var(--warning)">${job.chances_of_success}</div>
+                        </div>
+                        <div class="apply-btn">
+                            <a href="${job.direct_link}" target="_blank" rel="noopener noreferrer">View Official Notification</a>
+                        </div>
+                    `;
+                    dashboard.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('dashboard').innerHTML = '<p style="color: #ef4444;">Error loading jobs data. Check GitHub Actions/API.</p>';
+            }
+        }
+        fetchJobs();
     </script>
 </body>
 </html>

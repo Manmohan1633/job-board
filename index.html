@@ -5,113 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Career Strategist | ECE 2027</title>
     <style>
+        /* Catppuccin Mocha Theme */
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --accent: #38bdf8;
-            --success: #4ade80;
-            --warning: #facc15;
+            --base: #1e1e2e;
+            --surface0: #313244;
+            --surface1: #45475a;
+            --text: #cdd6f4;
+            --subtext0: #a6adc8;
+            --blue: #89b4fa;
+            --mauve: #cba6f7;
+            --green: #a6e3a1;
+            --yellow: #f9e2af;
+            --red: #f38ba8;
+            --peach: #fab387;
         }
+        
         body {
             font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
+            background-color: var(--base);
             color: var(--text);
             margin: 0;
             padding: 2rem;
-            line-height: 1.5;
+            line-height: 1.6;
         }
+        
         header {
             margin-bottom: 3rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--surface1);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
-        h1 { margin: 0; color: var(--accent); }
-        p.subtitle { color: #94a3b8; margin-top: 0.5rem; }
+        
+        h1 { margin: 0; color: var(--mauve); font-size: 2.5rem; letter-spacing: -0.05em; }
+        p.subtitle { color: var(--subtext0); margin-top: 0.5rem; font-size: 1.1rem; }
         
         #dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
         }
+        
         .job-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid #334155;
-            transition: transform 0.2s;
+            background: var(--surface0);
+            border-radius: 16px;
+            padding: 1.75rem;
+            border: 1px solid var(--surface1);
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .job-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .job-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            background: #334155;
-            margin-bottom: 1rem;
+        
+        .job-card:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--blue); 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
         }
-        .section-title { font-size: 0.875rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.25rem; }
-        .apply-btn {
-            margin-top: auto;
-            padding-top: 1.5rem;
+        
+        .job-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text); line-height: 1.3; }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
+        
+        .metric-badge {
+            background: var(--surface1);
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .metric-badge span { display: block; font-size: 0.7rem; color: var(--subtext0); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+        .metric-badge strong { color: var(--blue); }
+        .metric-badge.urgent strong { color: var(--red); }
+        .metric-badge.lucrative strong { color: var(--green); }
+        
+        .section-title { font-size: 0.8rem; color: var(--subtext0); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1.25rem; margin-bottom: 0.25rem; font-weight: 600; }
+        
+        .content-text { font-size: 0.95rem; color: var(--text); }
+        .highlight-warning { color: var(--yellow); font-weight: 500; }
+        
+        .apply-btn { margin-top: 2rem; }
         .apply-btn a {
             display: block;
             text-align: center;
-            background: var(--accent);
-            color: #0f172a;
+            background: var(--mauve);
+            color: var(--base);
             text-decoration: none;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-weight: bold;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-weight: 700;
             transition: opacity 0.2s;
         }
         .apply-btn a:hover { opacity: 0.9; }
-        .loader { text-align: center; color: var(--accent); font-weight: bold; }
+        
+        .loader { text-align: center; color: var(--blue); font-weight: bold; grid-column: 1 / -1; padding: 3rem; }
+        
+        @media (max-width: 768px) {
+            #dashboard { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>AI Career Strategist</h1>
-        <p class="subtitle">Curated Govt, PSU & Rajasthan State Jobs for ECE (Class of 2027)</p>
+        <div>
+            <h1>AI Career Strategist</h1>
+            <p class="subtitle">Curated Govt, PSU & Tech Jobs for ECE (Class of 2027)</p>
+        </div>
     </header>
 
-    <div id="dashboard"><div class="loader">Analyzing latest job postings...</div></div>
+    <div id="dashboard"><div class="loader">Fetching database...</div></div>
 
     <script>
         async function fetchJobs() {
             try {
-                // Cache-busting to ensure latest JSON is fetched
                 const response = await fetch(`jobs.json?t=${new Date().getTime()}`);
                 const jobs = await response.json();
                 const dashboard = document.getElementById('dashboard');
                 dashboard.innerHTML = '';
 
-                if (jobs.length === 0) {
-                    dashboard.innerHTML = '<p>No new relevant jobs found today.</p>';
+                if (!jobs || jobs.length === 0) {
+                    dashboard.innerHTML = '<p style="color: var(--subtext0);">Database is currently empty. Waiting for AI cron job.</p>';
                     return;
                 }
 
                 jobs.forEach(job => {
+                    // Fallbacks for older V1 JSON entries
+                    const salary = job.salary_or_pay || 'N/A';
+                    const location = job.job_location || 'N/A';
+                    const date = job.last_date || 'N/A';
+                    
                     const card = document.createElement('div');
                     card.className = 'job-card';
                     card.innerHTML = `
                         <div class="job-title">${job.title_dept}</div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric-badge lucrative">
+                                <span>Salary/Pay</span>
+                                <strong>${salary}</strong>
+                            </div>
+                            <div class="metric-badge">
+                                <span>Location</span>
+                                <strong>${location}</strong>
+                            </div>
+                            <div class="metric-badge urgent">
+                                <span>Deadline</span>
+                                <strong>${date}</strong>
+                            </div>
+                        </div>
+
                         <div>
                             <div class="section-title">Why Apply?</div>
-                            <div>${job.why_apply}</div>
+                            <div class="content-text">${job.why_apply}</div>
                             
                             <div class="section-title">Syllabus Match (ECE/GATE)</div>
-                            <div>${job.syllabus_compatibility}</div>
+                            <div class="content-text">${job.syllabus_compatibility}</div>
                             
                             <div class="section-title">Success Chances</div>
-                            <div style="color: var(--warning)">${job.chances_of_success}</div>
+                            <div class="content-text highlight-warning">${job.chances_of_success}</div>
                         </div>
+                        
                         <div class="apply-btn">
                             <a href="${job.direct_link}" target="_blank" rel="noopener noreferrer">View Official Notification</a>
                         </div>
@@ -119,7 +181,7 @@
                     dashboard.appendChild(card);
                 });
             } catch (error) {
-                document.getElementById('dashboard').innerHTML = '<p style="color: #ef4444;">Error loading jobs data. Check GitHub Actions/API.</p>';
+                document.getElementById('dashboard').innerHTML = '<p style="color: var(--red);">Error loading database. Ensure jobs.json exists in the repository.</p>';
             }
         }
         fetchJobs();
